@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "778203906842",
+    "project_id": "cygnus-c5e41",
+    "storage_bucket": "cygnus-c5e41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778203906842:android:ecf7d2775c629bb69362a3",
+        "android_client_info": {
+          "package_name": "com.example.cygnus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "778203906842-b621jpsek579hltrdhcvsdevccp3p3fl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cygnus",
+            "certificate_hash": "9268807e41b05c3c3f318dfca2c60ce8eac484d0"
+          }
+        },
+        {
+          "client_id": "778203906842-tv52m0adp6fujm9usgj31iljqp49uooh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDefh17ow6TWcRDLP6-HeshvyJCKT4gQlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "778203906842-tv52m0adp6fujm9usgj31iljqp49uooh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

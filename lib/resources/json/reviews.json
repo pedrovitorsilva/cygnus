@@ -1,0 +1,31 @@
+{
+    "reviews": [
+        {
+            "user": {
+                "userId": 1,
+                "name": "Davy Jones",
+                "email": "gameplayrj@.contato.com"
+            },
+            "rating": 5,
+            "comment": "Muito bom maluco"
+        },
+        {
+            "user": {
+                "userId": 2,
+                "name": "Igor3k",
+                "email": "igao3k@flow.com"
+            },
+            "rating": 3,
+            "comment": "Gostei não fera"
+        },
+        {
+            "user": {
+                "userId": 3,
+                "name": "Cross",
+                "email": "crosstosaur@youtube.com"
+            },
+            "rating": 4.3,
+            "comment": "Sensacional"
+        }
+    ]
+}

@@ -1,0 +1,57 @@
+name: cygnus
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  flat_list: ^0.1.14
+  provider: ^6.0.0
+  page_view_dot_indicator: ^2.3.0
+  toast: ^0.3.0
+  flutter_rating_bar: ^4.0.0
+  firebase_auth: ^4.19.2
+  google_sign_in: ^6.2.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^3.0.0
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets: # Change when use back-end
+    # Images
+    - lib/resources/img/product1.jpeg
+    - lib/resources/img/product2.jpeg
+    - lib/resources/img/product3.jpeg
+    - lib/resources/img/product4.jpeg
+    - lib/resources/img/product5.jpeg
+    - lib/resources/img/product6.jpeg
+    - lib/resources/img/product7.jpeg
+    - lib/resources/img/product8.jpeg
+    - lib/resources/img/product9.jpeg
+    - lib/resources/img/product10.jpeg
+    - lib/resources/img/bethesda.jpeg
+    - lib/resources/img/microsoft.jpeg
+    - lib/resources/img/ubisoft.jpeg
+    # Gallery images
+    - lib/resources/img/gallery.jpg
+    # Icons
+    - lib/resources/icons/cygnus.png
+    # Json files
+    - lib/resources/json/home.json
+    - lib/resources/json/reviews.json
