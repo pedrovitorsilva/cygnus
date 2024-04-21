@@ -202,216 +202,225 @@ class _ProductState extends State<Product> {
 
     String imagePath = "lib/resources/img/product$productId.jpeg";
 
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    stateApp.showMain();
-                  },
-                  child: const Icon(Icons.arrow_back, size: 30),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    "Voltar".toString(),
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 2, left: 15),
-                      child: Image.asset(
-                        "lib/resources/icons/cygnus.png",
-                        height: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )),
-        body: Scrollbar(
-            child: SingleChildScrollView(
-          child: SizedBox(
-              // width: 2000,
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment
-                      .start, // Ensure that the row items are aligned to the start
+    return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          stateApp.showMain();
+        },
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                title: Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                      ),
+                    GestureDetector(
+                      onTap: () {
+                        stateApp.showMain();
+                      },
+                      child: const Icon(Icons.arrow_back, size: 30),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Expanded(
-                          // Ensure that the column occupies the remaining space
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            constraints: const BoxConstraints(maxWidth: 157),
-                            child: Text(
-                              _product["product"]["name"],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                              softWrap: true,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              _product["company"]["name"],
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                  fontSize: 13, color: Colors.grey),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: RatingBar.builder(
-                              ignoreGestures: true,
-                              initialRating: _product["rating"].toDouble(),
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemSize: 16,
-                              itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: Color.fromARGB(255, 72, 20, 141),
-                              ),
-                              onRatingUpdate: (rating) {
-                                //
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              "R\$ ${_product["product"]["price"].toString()}",
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      )),
-                    ),
-                  ]),
-              // ------------------------
-              Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(25),
+                      padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
-                        _product["product"]["description"],
-                        style: const TextStyle(fontSize: 12),
+                        "Voltar".toString(),
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2, left: 15),
+                          child: Image.asset(
+                            "lib/resources/icons/cygnus.png",
+                            height: 40,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
-                ),
-              ),
-              // -----------------
-              Padding(
-                padding: const EdgeInsets.only(top: 15, bottom: 30),
-                child: Column(children: [
-                  Card(
-                    margin: const EdgeInsets.all(10),
-                    child: OverflowBar(
-                      alignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        TextButton(
-                          child: const Text(
-                            'Get Cygnus Pass',
-                            style: TextStyle(color: Colors.white),
+                )),
+            body: Scrollbar(
+                child: SingleChildScrollView(
+              child: SizedBox(
+                  // width: 2000,
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Ensure that the row items are aligned to the start
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Image.asset(
+                            imagePath,
+                            fit: BoxFit.cover,
                           ),
-                          onPressed: () {},
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Expanded(
+                              // Ensure that the column occupies the remaining space
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 157),
+                                child: Text(
+                                  _product["product"]["name"],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  softWrap: true,
+                                  overflow: TextOverflow.clip,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  _product["company"]["name"],
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                      fontSize: 13, color: Colors.grey),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: RatingBar.builder(
+                                  ignoreGestures: true,
+                                  initialRating: _product["rating"].toDouble(),
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 16,
+                                  itemBuilder: (context, _) => const Icon(
+                                    Icons.star,
+                                    color: Color.fromARGB(255, 72, 20, 141),
+                                  ),
+                                  onRatingUpdate: (rating) {
+                                    //
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  "R\$ ${_product["product"]["price"].toString()}",
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            ],
+                          )),
+                        ),
+                      ]),
+                  // ------------------------
+                  Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Text(
+                            _product["product"]["description"],
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Card(
-                    color: const Color.fromARGB(255, 184, 54, 244),
-                    margin: const EdgeInsets.all(10),
-                    child: OverflowBar(
-                      alignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        TextButton(
-                          child: const Text('Buy Now', 
-                                style: TextStyle(color: Colors.white),                      
-                          ),
-                          onPressed: () {},
+                  // -----------------
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15, bottom: 30),
+                    child: Column(children: [
+                      Card(
+                        margin: const EdgeInsets.all(10),
+                        child: OverflowBar(
+                          alignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            TextButton(
+                              child: const Text(
+                                'Get Cygnus Pass',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      Card(
+                        color: const Color.fromARGB(255, 184, 54, 244),
+                        margin: const EdgeInsets.all(10),
+                        child: OverflowBar(
+                          alignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            TextButton(
+                              child: const Text(
+                                'Buy Now',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  ),
+                  // -----------------------------
+                  const Padding(
+                      padding: EdgeInsets.only(left: 10, bottom: 20),
+                      child: Text(
+                        "Gallery",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 22),
+                      )),
+                  SizedBox(
+                    height: 230,
+                    child: PageView.builder(
+                      itemCount: 3,
+                      controller: _controladorSlides,
+                      onPageChanged: (slide) {
+                        setState(() {
+                          _slideSelecionado = slide;
+                        });
+                      },
+                      itemBuilder: (context, pagePosition) {
+                        return Image.asset(
+                          "lib/resources/img/gallery.jpg",
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
                   ),
-                ]),
-              ),
-              // -----------------------------
-              const Padding(
-                  padding: EdgeInsets.only(left: 10, bottom: 20),
-                  child: Text(
-                    "Gallery",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                  )),
-              SizedBox(
-                height: 230,
-                child: PageView.builder(
-                  itemCount: 3,
-                  controller: _controladorSlides,
-                  onPageChanged: (slide) {
-                    setState(() {
-                      _slideSelecionado = slide;
-                    });
-                  },
-                  itemBuilder: (context, pagePosition) {
-                    return Image.asset(
-                      "lib/resources/img/gallery.jpg",
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: PageViewDotIndicator(
-                  currentItem: _slideSelecionado,
-                  count: 3,
-                  unselectedColor: Colors.black26,
-                  selectedColor: const Color.fromARGB(255, 159, 33, 243),
-                  duration: const Duration(milliseconds: 200),
-                  boxShape: BoxShape.circle,
-                ),
-              ),
-              // -------
-              const Padding(
-                  padding: EdgeInsets.only(left: 10, bottom: 20),
-                  child: Text(
-                    "Reviews",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                  )),
-              // ------
-              _hasReviews ? _showReviews() : _noReviewsMessage(),
-            ],
-          )),
-        )));
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: PageViewDotIndicator(
+                      currentItem: _slideSelecionado,
+                      count: 3,
+                      unselectedColor: Colors.black26,
+                      selectedColor: const Color.fromARGB(255, 159, 33, 243),
+                      duration: const Duration(milliseconds: 200),
+                      boxShape: BoxShape.circle,
+                    ),
+                  ),
+                  // -------
+                  const Padding(
+                      padding: EdgeInsets.only(left: 10, bottom: 20),
+                      child: Text(
+                        "Reviews",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 22),
+                      )),
+                  // ------
+                  _hasReviews ? _showReviews() : _noReviewsMessage(),
+                ],
+              )),
+            ))));
   }
 
   @override

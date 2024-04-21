@@ -18,6 +18,6 @@ Trabalho da disciplina de Programação Mobile - IFBA - 2024.1
 <li> Back-End (W.I.P) -> JSON</li>
 </ul>
 
-## Telas Componentes
+## Telas e Componentes
 
 W.I.P.

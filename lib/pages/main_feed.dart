@@ -191,7 +191,7 @@ class _MainFeedState extends State<MainFeed> {
             onEndReached: () => _loadMainFeed(),
             buildItem: (item, int indice) {
               return SizedBox(
-                  height: 310,
+                  height: 320,
                   child: Padding(
                       padding:
                           const EdgeInsets.only(left: 7, right: 7, top: 10),

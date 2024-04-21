@@ -84,7 +84,7 @@ class ProductCard extends StatelessWidget {
                         8), // Adiciona um espaço entre o preço e o ícone de favorito
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment
                   .center, // Centraliza os elementos horizontalmente
@@ -105,9 +105,25 @@ class ProductCard extends StatelessWidget {
                   onRatingUpdate: (rating) {
                     //
                   },
-                ),
+                )
               ],
-            ), // Adiciona um espaço abaixo dos ícones de preço e rating
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                  top: 6, left: 15, right: 15), // Ajuste conforme necessário
+              child: Card(
+                color: Color.fromARGB(255, 92, 8, 228),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 2.5,
+                      horizontal: 15), // Ajuste conforme necessário
+                  child: Text(
+                    'Click for Details',
+                    style: TextStyle(fontSize: 11, color: Colors.white),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
