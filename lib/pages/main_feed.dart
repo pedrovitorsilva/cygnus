@@ -1,20 +1,24 @@
 import 'dart:convert';
+import 'package:cygnus/components/user_message.dart';
 import 'package:flat_list/flat_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
-// My packages
+
+// My Packages
 import 'package:cygnus/autenticator.dart';
 import 'package:cygnus/components/productcard.dart';
+import 'package:cygnus/components/cygnus_icon.dart';
+import 'package:cygnus/components/user_icon.dart';
+import 'package:cygnus/components/custom_search_bar.dart';
 import 'package:cygnus/state.dart';
 
 class MainFeed extends StatefulWidget {
   const MainFeed({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _MainFeedState();
-  }
+  // ignore: library_private_types_in_public_api
+  _MainFeedState createState() => _MainFeedState();
 }
 
 const int tamanhoPagina = 5;
@@ -53,6 +57,7 @@ class _MainFeedState extends State<MainFeed> {
   Future<void> _readStaticFeed() async {
     final String contentJson =
         await rootBundle.loadString("lib/resources/json/home.json");
+
     _staticFeed = await json.decode(contentJson);
 
     _loadMainFeed();
@@ -64,6 +69,7 @@ class _MainFeedState extends State<MainFeed> {
     });
 
     var feedList = [];
+
     if (_filter.isNotEmpty) {
       _staticFeed["products"].where((item) {
         String nome = item["product"]["name"];
@@ -105,77 +111,39 @@ class _MainFeedState extends State<MainFeed> {
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 27, 5, 80),
           actions: [
-            Padding(
-                padding: const EdgeInsets.only(top: 2, left: 15),
-                child: Image.asset(
-                  "lib/resources/icons/cygnus.png",
-                  height: 40,
-                  color: Colors.white,
-                )),
-            Expanded(
-                child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 10, bottom: 10, left: 15, right: 5),
-              child: TextField(
-                controller: _filterController,
-                onSubmitted: (description) {
-                  _filter = description;
-
-                  _updateMainFeed();
-                },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.search),
-                  hintText: 'Search for Games...',
-                  contentPadding: EdgeInsets.symmetric(vertical: 0),
-                ),
-              ),
-            )),
-            actualUser
-                // If has user
-                ? GestureDetector(
-                    onTap: () {
-                      Autenticator.logout().then((_) {
-                        setState(() {
-                          stateApp.onLogout();
-                        });
-
-                        Toast.show("Disconnected.",
-                            duration: Toast.lengthLong, gravity: Toast.bottom);
-                      });
-                    },
-                    // Image tapped
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 2,
-                        left: 11,
-                        right: 15
-                      ),
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          stateApp.user?.photoUrl ??
-                              "", // Use the user's photoUrl
-                        ),
-                        radius: 11,
-                      ),
-                    ),
-                  )
-// If hasn't user
-                : IconButton(
-                    onPressed: () {
-                      Autenticator.login().then((user) {
-                        setState(() {
-                          stateApp.onLogin(user);
-                        });
-
-                        String formattedName =
-                            user.name!.split(" ").sublist(0, 2).join(" ");
-
-                        Toast.show("Connected successfully as $formattedName.",
-                            duration: Toast.lengthLong, gravity: Toast.bottom);
-                      });
-                    },
-                    icon: const Icon(Icons.account_circle_rounded))
+            /// App Main Icon ----
+            const Padding(
+                padding: EdgeInsets.only(top: 2, left: 15),
+                child: CygnusIcon()),
+            // SearchBar ----
+            CustomSearchBar(
+              controller: _filterController,
+              onSubmitted: (description) {
+                _filter = description;
+                _updateMainFeed();
+              },
+            ),
+            // UserIcon ----
+            UserIcon(
+              hasUser: actualUser,
+              onLogout: () {
+                Autenticator.logout().then((_) {
+                  setState(() {
+                    stateApp.onLogout();
+                  });
+                  userMessage("Disconnected.");
+                });
+              },
+              onLogin: () {
+                Autenticator.login().then((user) {
+                  setState(() {
+                    stateApp.onLogin(user);
+                  });
+                  userMessage(
+                      "Connected successfully as ${user.formattedName}");
+                });
+              },
+            ),
           ],
         ),
         body: FlatList(

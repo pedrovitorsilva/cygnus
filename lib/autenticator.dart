@@ -8,6 +8,12 @@ class User {
     _name = name;
   }
 
+  String? _formattedName = "";
+  String? get formattedName => _formattedName;
+  set formattedName(String? fname) {
+    _formattedName = fname;
+  }
+
   String _email = "";
   String get email => _email;
   set email(String email) {
@@ -24,6 +30,7 @@ class User {
     _name = name;
     _email = email;
     _photoUrl = photoUrl;
+    _formattedName = name != null ? name.split(" ").sublist(0, 2).join(" ") : "";
   }
 }
 
