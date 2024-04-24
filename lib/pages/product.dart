@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'package:cygnus/components/buy_buttons.dart';
+import 'package:cygnus/components/product_appbar.dart';
+import 'package:cygnus/components/product_info.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // My Packages
 import 'package:cygnus/state.dart';
+import 'package:cygnus/components/review.dart';
 
 class Product extends StatefulWidget {
   const Product({super.key});
@@ -28,7 +32,7 @@ class _ProductState extends State<Product> {
   bool _loadingReviews = false;
   bool _hasReviews = false;
 
-  late PageController _controladorSlides;
+  late PageController _slideController;
   late int _slideSelecionado;
 
   @override
@@ -41,7 +45,7 @@ class _ProductState extends State<Product> {
 
   void _iniciarSlides() {
     _slideSelecionado = 0;
-    _controladorSlides = PageController(initialPage: _slideSelecionado);
+    _slideController = PageController(initialPage: _slideSelecionado);
   }
 
   Future<void> __readStaticFeed() async {
@@ -86,22 +90,8 @@ class _ProductState extends State<Product> {
 // CONSERTAR AAAAAAA
   Widget _noProductMessage() {
     return Scaffold(
-        appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Row(children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 6),
-                        child: Text("Cygnus"))
-                  ]),
-                  GestureDetector(
-                      onTap: () {
-                        stateApp.showProduct(stateApp.idProduct);
-                      },
-                      child: const Icon(Icons.arrow_back))
-                ])),
+        resizeToAvoidBottomInset: false,
+        appBar: product_appBar,
         body: const SizedBox.expand(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -116,82 +106,63 @@ class _ProductState extends State<Product> {
   }
 
   Widget _noReviewsMessage() {
-    return const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(Icons.error, size: 32, color: Colors.red),
-      Text("No reviews available yet.",
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 18, color: Colors.red))
-    ]);
-  }
-
-  Widget _showReviews() {
-    return _loadingReviews
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Column(
-            children: _reviews.map((item) {
-              return SizedBox(
-                child: Card(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.account_circle_rounded,
-                              size: 35,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 6),
-                                child: Text(
-                                  item["user"]["name"],
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 6),
-                                  child: RatingBar.builder(
-                                    ignoreGestures: true,
-                                    initialRating: item["rating"].toDouble(),
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 12,
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: Color.fromARGB(255, 72, 20, 141),
-                                    ),
-                                    onRatingUpdate: (rating) {
-                                      //
-                                    },
-                                  ))
-                            ],
-                          ),
-                        ],
-                      ),
-                      // ----------
-                      Row(children: [
-                        Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Text(
-                            item["comment"],
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ])
-                    ],
+    return const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title
+          Padding(
+              padding: EdgeInsets.only(left: 10, bottom: 20),
+              child: Text(
+                "Reviews",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+              )),
+          Center(
+              child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, size: 32, color: Colors.red),
+                Text(
+                  "No reviews available yet.",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.red,
                   ),
                 ),
-              );
-            }).toList(),
-          );
+              ],
+            ),
+          ))
+        ]);
+  }
+
+  /// For each review [item], create a [Review] instance
+  ///
+  /// If [_loadingReviews], show a loading circle
+  Widget _showReviews() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title
+        const Padding(
+            padding: EdgeInsets.only(left: 10, bottom: 20),
+            child: Text(
+              "Reviews",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+            )),
+        // Data(reviews)
+        _loadingReviews
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: _reviews.map((item) {
+                  return Review(item: item);
+                }).toList(),
+              )
+      ],
+    );
   }
 
   Widget _showProduct() {
@@ -201,6 +172,13 @@ class _ProductState extends State<Product> {
 
     String imagePath = "lib/resources/img/product$productId.jpeg";
 
+    // CHANGE THIS WHEN ADD BACKEND
+    List galleryImages = [
+      "lib/resources/img/gallery.jpg",
+      "lib/resources/img/gallery.jpg",
+      "lib/resources/img/gallery.jpg",
+    ];
+
     return PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
@@ -208,169 +186,61 @@ class _ProductState extends State<Product> {
         },
         child: Scaffold(
             resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                title: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        stateApp.showMain();
-                      },
-                      child: const Icon(Icons.arrow_back, size: 30),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        "Voltar".toString(),
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 2, left: 15),
-                          child: Image.asset(
-                            "lib/resources/icons/cygnus.png",
-                            height: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
+            appBar: product_appBar,
             body: Scrollbar(
                 child: SingleChildScrollView(
               child: SizedBox(
-                  // width: 2000,
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start, // Ensure that the row items are aligned to the start
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Expanded(
-                              // Ensure that the column occupies the remaining space
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 157),
-                                child: Text(
-                                  _product["product"]["name"],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                  softWrap: true,
-                                  overflow: TextOverflow.clip,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  _product["company"]["name"],
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                      fontSize: 13, color: Colors.grey),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: RatingBar.builder(
-                                  ignoreGestures: true,
-                                  initialRating: _product["rating"].toDouble(),
-                                  minRating: 1,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemSize: 16,
-                                  itemBuilder: (context, _) => const Icon(
-                                    Icons.star,
-                                    color: Color.fromARGB(255, 72, 20, 141),
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    //
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  "R\$ ${_product["product"]["price"].toString()}",
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(fontSize: 13),
-                                ),
-                              ),
-                            ],
-                          )),
-                        ),
-                      ]),
-                  // ------------------------
-                  Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(25),
-                          child: Text(
-                            _product["product"]["description"],
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // -----------------
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15, bottom: 30),
-                    child: Column(children: [
-                      Card(
-                        margin: const EdgeInsets.all(10),
-                        child: OverflowBar(
-                          alignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            TextButton(
-                              child: const Text(
-                                'Get Cygnus Pass',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                      ),
-                      Card(
-                        color: const Color.fromARGB(255, 184, 54, 244),
-                        margin: const EdgeInsets.all(10),
-                        child: OverflowBar(
-                          alignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            TextButton(
-                              child: const Text(
-                                'Buy Now',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                      ),
-                    ]),
-                  ),
-                  // -----------------------------
+                  ProductInfo(product: _product, imagePath: imagePath),
+                  // Only show buttonAreas if logged
+                  usuarioLogado
+                      ? buttonAreas
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Container()),
+
+                  // Only show Rating if logged
+                  usuarioLogado
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              const Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 10, bottom: 10),
+                                  child: Text(
+                                    "Rate this Game",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22),
+                                  )),
+                              Center(
+                                  child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(top: 10, bottom: 20),
+                                      child: RatingBar.builder(
+                                        initialRating:
+                                            _product["rating"].toDouble(),
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: 40,
+                                        itemBuilder: (context, _) => const Icon(
+                                          Icons.star,
+                                          color: Colors.yellow
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          //
+                                        },
+                                      )))
+                            ])
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Container()),
+
+                  // Gallery ---------------
                   const Padding(
                       padding: EdgeInsets.only(left: 10, bottom: 20),
                       child: Text(
@@ -381,8 +251,8 @@ class _ProductState extends State<Product> {
                   SizedBox(
                     height: 230,
                     child: PageView.builder(
-                      itemCount: 3,
-                      controller: _controladorSlides,
+                      itemCount: galleryImages.length,
+                      controller: _slideController,
                       onPageChanged: (slide) {
                         setState(() {
                           _slideSelecionado = slide;
@@ -390,7 +260,7 @@ class _ProductState extends State<Product> {
                       },
                       itemBuilder: (context, pagePosition) {
                         return Image.asset(
-                          "lib/resources/img/gallery.jpg",
+                          galleryImages[pagePosition],
                           fit: BoxFit.cover,
                         );
                       },
@@ -400,22 +270,15 @@ class _ProductState extends State<Product> {
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     child: PageViewDotIndicator(
                       currentItem: _slideSelecionado,
-                      count: 3,
+                      count: galleryImages.length,
                       unselectedColor: Colors.black26,
                       selectedColor: const Color.fromARGB(255, 159, 33, 243),
                       duration: const Duration(milliseconds: 200),
                       boxShape: BoxShape.circle,
                     ),
                   ),
-                  // -------
-                  const Padding(
-                      padding: EdgeInsets.only(left: 10, bottom: 20),
-                      child: Text(
-                        "Reviews",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 22),
-                      )),
-                  // ------
+// End of Gallery
+
                   _hasReviews ? _showReviews() : _noReviewsMessage(),
                 ],
               )),

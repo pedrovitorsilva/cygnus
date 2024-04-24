@@ -7,7 +7,7 @@ import 'package:toast/toast.dart';
 
 // My Packages
 import 'package:cygnus/autenticator.dart';
-import 'package:cygnus/components/productcard.dart';
+import 'package:cygnus/components/product_card.dart';
 import 'package:cygnus/components/cygnus_icon.dart';
 import 'package:cygnus/components/user_icon.dart';
 import 'package:cygnus/components/custom_search_bar.dart';
