@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'package:cygnus/components/buy_buttons.dart';
-import 'package:cygnus/components/product_appbar.dart';
-import 'package:cygnus/components/product_info.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +6,9 @@ import 'package:flutter/services.dart';
 // My Packages
 import 'package:cygnus/state.dart';
 import 'package:cygnus/components/review.dart';
+import 'package:cygnus/components/buy_buttons.dart';
+import 'package:cygnus/components/product_info.dart';
+import 'package:cygnus/components/product_appbar.dart';
 
 class Product extends StatefulWidget {
   const Product({super.key});
@@ -179,6 +179,36 @@ class _ProductState extends State<Product> {
       "lib/resources/img/gallery.jpg",
     ];
 
+    // TextController for comment input
+    final TextEditingController commentController = TextEditingController();
+    double userRating = _product["rating"].toDouble();
+
+    void postComment() {
+      String comment = commentController.text.trim();
+
+      if (comment.isNotEmpty) {
+        // Create new review object
+        var newReview = {
+          "user": {
+            "name": stateApp.user!.name,
+            "email": stateApp.user!.email,
+          },
+          "rating": userRating,
+          "comment": comment,
+        };
+
+        // Add the new review to _reviews list
+        setState(() {
+          _reviews.add(newReview);
+          _hasReviews = true; // Make sure to set _hasReviews to true
+        });
+        // Add code to update JSON file here
+
+        commentController.clear();
+        FocusScope.of(context).unfocus(); // Close keyboard
+      }
+    }
+
     return PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
@@ -201,7 +231,7 @@ class _ProductState extends State<Product> {
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Container()),
 
-                  // Only show Rating if logged
+                  // Only show Rating Area if logged
                   usuarioLogado
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,8 +247,8 @@ class _ProductState extends State<Product> {
                                   )),
                               Center(
                                   child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(top: 10, bottom: 20),
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 20),
                                       child: RatingBar.builder(
                                         initialRating:
                                             _product["rating"].toDouble(),
@@ -228,13 +258,51 @@ class _ProductState extends State<Product> {
                                         itemCount: 5,
                                         itemSize: 40,
                                         itemBuilder: (context, _) => const Icon(
-                                          Icons.star,
-                                          color: Colors.yellow
-                                        ),
+                                            Icons.star,
+                                            color: Colors.yellow),
                                         onRatingUpdate: (rating) {
-                                          //
+                                          userRating = rating;
                                         },
-                                      )))
+                                      ))),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 20),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        controller: commentController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Add a comment...',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    // Button to post comment
+                                    SizedBox(
+                                        width:
+                                            40, // Adjust the width according to your preference
+                                        height:
+                                            40, // Adjust the height according to your preference
+                                        child: ElevatedButton(
+                                            onPressed: postComment,
+                                            style: ButtonStyle(
+                                              padding:
+                                                  MaterialStateProperty.all(
+                                                      EdgeInsets.zero),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.transparent),
+                                              elevation:
+                                                  MaterialStateProperty.all(0),
+                                            ),
+                                            child: const Icon(Icons
+                                                .send)) // Icon for posting comment
+                                        ),
+                                  ],
+                                ),
+                              ),
                             ])
                       : Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),

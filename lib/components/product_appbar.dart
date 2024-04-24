@@ -19,7 +19,7 @@ AppBar product_appBar = AppBar(
         style: TextStyle(fontSize: 15, color: Colors.white),
       ),
     ),
-    Expanded(
+    const Expanded(
       child: Align(alignment: Alignment.centerRight, child: CygnusIcon()),
     ),
   ],

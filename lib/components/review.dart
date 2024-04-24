@@ -69,7 +69,6 @@ class Review extends StatelessWidget {
             Row(
               children: [anonymousIcon, nameAndRating(item)],
             ),
-            // ----------
             Row(children: [
               reviewComment(item)
             ])
