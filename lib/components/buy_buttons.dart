@@ -33,7 +33,6 @@ Card buyButton = Card(
   ),
 );
 
-
 /// An area with a [getCygnusPassButton] and a [buyButton]
 Padding buttonAreas = Padding(
   padding: const EdgeInsets.only(top: 15, bottom: 30),

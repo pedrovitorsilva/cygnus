@@ -5,15 +5,19 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class ProductCard extends StatelessWidget {
   final dynamic product;
 
+  /// Card model for each product on [main_feed] page.
+  /// 
+  /// Contains an Image, Company Name, Company Icon, 
+  /// Product Name, Rating, Price and Details Button
   const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     String productId =
-        product["_id"].toString(); // Obtém o ID do produto como uma string
+        product["_id"].toString();
 
     String imagePath =
-        "lib/resources/img/product$productId.jpeg"; // Caminho para a imagem com base no ID
+        "lib/resources/img/product$productId.jpeg";
 
     String companyAvatar = product["company"]["avatar"].toString();
     String companyPath = "lib/resources/img/$companyAvatar";
@@ -32,20 +36,20 @@ class ProductCard extends StatelessWidget {
             ),
             const SizedBox(
                 height:
-                    10), // Adiciona um espaço entre a imagem e a linha da empresa
+                    10),
             Row(
               mainAxisAlignment: MainAxisAlignment
-                  .center, // Centraliza os elementos horizontalmente
+                  .center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                      right: 10), // Adiciona um espaço à direita do avatar
+                      right: 10),
                   child: CircleAvatar(
                     backgroundColor: Colors.transparent,
-                    radius: 15, // Tamanho fixo do avatar
+                    radius: 15,
                     child: Image.asset(
                       companyPath,
-                      width: 24, // Tamanho fixo do ícone da empresa
+                      width: 24,
                     ),
                   ),
                 ),
@@ -57,10 +61,10 @@ class ProductCard extends StatelessWidget {
             ),
             const SizedBox(
                 height:
-                    10), // Adiciona um espaço entre a linha da empresa e o nome do jogo
+                    10),
             Row(
                 mainAxisAlignment: MainAxisAlignment
-                    .center, // Centraliza os elementos horizontalmente
+                    .center, 
                 children: [
                   Text(
                     product["product"]["name"],
@@ -73,7 +77,7 @@ class ProductCard extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment
-                  .center, // Centraliza os elementos horizontalmente
+                  .center,
               children: [
                 Text(
                   "R\$ ${product['product']['price'].toString()}",
@@ -81,15 +85,14 @@ class ProductCard extends StatelessWidget {
                 ),
                 const SizedBox(
                     width:
-                        8), // Adiciona um espaço entre o preço e o ícone de favorito
+                        8),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment
-                  .center, // Centraliza os elementos horizontalmente
+                  .center, 
               children: [
-                // Adiciona um espaço entre o preço e o rating
                 RatingBar.builder(
                   ignoreGestures: true,
                   initialRating: product["rating"].toDouble(),
@@ -110,13 +113,13 @@ class ProductCard extends StatelessWidget {
             ),
             const Padding(
               padding: EdgeInsets.only(
-                  top: 6, left: 15, right: 15), // Ajuste conforme necessário
+                  top: 6, left: 15, right: 15),
               child: Card(
                 color: Color.fromARGB(255, 92, 8, 228),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                       vertical: 2.5,
-                      horizontal: 15), // Ajuste conforme necessário
+                      horizontal: 15),
                   child: Text(
                     'Click for Details',
                     style: TextStyle(fontSize: 11, color: Colors.white),

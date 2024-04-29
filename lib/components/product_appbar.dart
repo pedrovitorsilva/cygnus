@@ -2,8 +2,10 @@ import 'package:cygnus/components/cygnus_icon.dart';
 import 'package:cygnus/state.dart';
 import 'package:flutter/material.dart';
 
+/// Static AppBar from Product pages
+/// Contains a backButton - [GestureDetector] and a [CygnusIcon] 
 // ignore: non_constant_identifier_names
-AppBar product_appBar = AppBar(
+AppBar productAppBar = AppBar(
     title: Row(
   children: [
     GestureDetector(

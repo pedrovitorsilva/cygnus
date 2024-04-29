@@ -4,7 +4,7 @@ class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;
   final Function(String) onSubmitted;
 
-
+  /// Custom SearchBar with [hintText]
   const CustomSearchBar({super.key, 
     required this.controller,
     required this.onSubmitted,

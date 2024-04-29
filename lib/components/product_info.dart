@@ -5,6 +5,11 @@ class ProductInfo extends StatelessWidget {
   final dynamic product;
   final String imagePath;
 
+  /// Information over a product.
+  /// 
+  /// Contains a [mainImage].
+  /// 
+  /// Constains a [mainData] widget, with name, rating and price.
   const ProductInfo(
       {super.key, required this.product, required this.imagePath});
 
@@ -117,8 +122,7 @@ class ProductInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment
               .start, // Ensure that the row items are aligned to the start
           children: [mainImage(), mainData()]),
-
-          productDescription()
+      productDescription()
     ]);
   }
 }

@@ -6,6 +6,9 @@ class UserIcon extends StatelessWidget {
   final VoidCallback onLogout;
   final VoidCallback onLogin;
 
+  /// Icon from MainFeed Page. 
+  /// 
+  /// When logged, use Google Icon image. Else, use a generic user image
   const UserIcon({
     super.key,
     required this.hasUser,

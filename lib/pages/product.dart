@@ -19,6 +19,8 @@ class Product extends StatefulWidget {
   }
 }
 
+// Product State, based on request
+// This state will be more realistic when backend its done
 enum _StateOfProduct { nonVerified, hasProduct, noProduct }
 
 class _ProductState extends State<Product> {
@@ -33,19 +35,19 @@ class _ProductState extends State<Product> {
   bool _hasReviews = false;
 
   late PageController _slideController;
-  late int _slideSelecionado;
+  late int _selectedSlide;
 
   @override
   void initState() {
     super.initState();
 
     __readStaticFeed();
-    _iniciarSlides();
+    _startSlides();
   }
 
-  void _iniciarSlides() {
-    _slideSelecionado = 0;
-    _slideController = PageController(initialPage: _slideSelecionado);
+  void _startSlides() {
+    _selectedSlide = 0;
+    _slideController = PageController(initialPage: _selectedSlide);
   }
 
   Future<void> __readStaticFeed() async {
@@ -87,11 +89,11 @@ class _ProductState extends State<Product> {
     });
   }
 
-// CONSERTAR AAAAAAA
+  /// Widget appears when product is not available (backend feature to be implemented)
   Widget _noProductMessage() {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: product_appBar,
+        appBar: productAppBar,
         body: const SizedBox.expand(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -105,6 +107,7 @@ class _ProductState extends State<Product> {
         ])));
   }
 
+  /// Widget appears when product hasn't reviews.
   Widget _noReviewsMessage() {
     return const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,6 +168,8 @@ class _ProductState extends State<Product> {
     );
   }
 
+  /// Main widget.
+  /// Contains [ProductInfo], [buttonAreas], ratingArea, Gallery and [_showReviews]
   Widget _showProduct() {
     bool usuarioLogado = stateApp.user != null;
 
@@ -216,7 +221,7 @@ class _ProductState extends State<Product> {
         },
         child: Scaffold(
             resizeToAvoidBottomInset: false,
-            appBar: product_appBar,
+            appBar: productAppBar,
             body: Scrollbar(
                 child: SingleChildScrollView(
               child: SizedBox(
@@ -323,7 +328,7 @@ class _ProductState extends State<Product> {
                       controller: _slideController,
                       onPageChanged: (slide) {
                         setState(() {
-                          _slideSelecionado = slide;
+                          _selectedSlide = slide;
                         });
                       },
                       itemBuilder: (context, pagePosition) {
@@ -337,7 +342,7 @@ class _ProductState extends State<Product> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     child: PageViewDotIndicator(
-                      currentItem: _slideSelecionado,
+                      currentItem: _selectedSlide,
                       count: galleryImages.length,
                       unselectedColor: Colors.black26,
                       selectedColor: const Color.fromARGB(255, 159, 33, 243),
@@ -345,8 +350,7 @@ class _ProductState extends State<Product> {
                       boxShape: BoxShape.circle,
                     ),
                   ),
-// End of Gallery
-
+                  // End of Gallery
                   _hasReviews ? _showReviews() : _noReviewsMessage(),
                 ],
               )),
@@ -355,17 +359,17 @@ class _ProductState extends State<Product> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: non_constant_identifier_names
-    Widget Product = const SizedBox.shrink();
+
+    Widget product = const SizedBox.shrink();
 
     if (_hasProduct == _StateOfProduct.nonVerified) {
-      Product = const SizedBox();
+      product = const SizedBox();
     } else if (_hasProduct == _StateOfProduct.hasProduct) {
-      Product = _showProduct();
+      product = _showProduct();
     } else {
-      Product = _noProductMessage();
+      product = _noProductMessage();
     }
 
-    return Product;
+    return product;
   }
 }

@@ -14,6 +14,10 @@ import 'package:cygnus/components/custom_search_bar.dart';
 import 'package:cygnus/state.dart';
 
 class MainFeed extends StatefulWidget {
+
+  /// Incial app landing page.
+  /// 
+  /// Main Feed with a [ProductCard] grid
   const MainFeed({super.key});
 
   @override
@@ -21,7 +25,7 @@ class MainFeed extends StatefulWidget {
   _MainFeedState createState() => _MainFeedState();
 }
 
-const int tamanhoPagina = 5;
+const int pageSize = 5;
 
 class _MainFeedState extends State<MainFeed> {
   late dynamic _staticFeed;
@@ -44,6 +48,7 @@ class _MainFeedState extends State<MainFeed> {
     _recoverLoggedUser();
   }
 
+  /// Recover user if logged on last session.
   void _recoverLoggedUser() {
     Autenticator.recoverUser().then((user) {
       if (user != null) {
@@ -81,7 +86,7 @@ class _MainFeedState extends State<MainFeed> {
     } else {
       feedList = _products;
 
-      final totalMainFeedParaCarregar = _nextPage * tamanhoPagina;
+      final totalMainFeedParaCarregar = _nextPage * pageSize;
       if (_staticFeed["products"].length >= totalMainFeedParaCarregar) {
         feedList =
             _staticFeed["products"].sublist(0, totalMainFeedParaCarregar);
@@ -153,7 +158,6 @@ class _MainFeedState extends State<MainFeed> {
             onRefresh: () {
               _filter = "";
               _filterController.clear();
-
               return _updateMainFeed();
             },
             onEndReached: () => _loadMainFeed(),

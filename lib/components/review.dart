@@ -4,10 +4,14 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class Review extends StatelessWidget {
   final dynamic item;
 
+  /// Review element, used in product page.
+  /// 
+  /// Used inside [flatList] elements.
+  /// 
+  /// Contains a user image, name, rating, and comment.
   const Review({super.key, required this.item});
 
   // Components
-
   final Padding anonymousIcon = const Padding(
     padding: EdgeInsets.all(6),
     child: Icon(
@@ -69,9 +73,7 @@ class Review extends StatelessWidget {
             Row(
               children: [anonymousIcon, nameAndRating(item)],
             ),
-            Row(children: [
-              reviewComment(item)
-            ])
+            Row(children: [reviewComment(item)])
           ],
         ),
       ),
