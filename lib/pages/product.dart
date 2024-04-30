@@ -3,6 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 // My Packages
 import 'package:cygnus/state.dart';
 import 'package:cygnus/components/review.dart';
