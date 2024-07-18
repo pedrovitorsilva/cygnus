@@ -1,86 +1,63 @@
 from flask import Flask, jsonify
 import mysql.connector as mysql
 
-servico = Flask("likes")
+servico = Flask("rating")
 
-SERVIDOR_BANCO = "banco"
-USUARIO_BANCO = "root"
-SENHA_BANCO = "admin"
-NOME_BANCO = "marcas"
+DB_SERVER = "database"
+DB_USER = "root"
+DB_PASSWORD = "admin"
+DB_DATABASE_NAME = "cygnus"
 
-def get_conexao_com_bd():
-    conexao = mysql.connect(host=SERVIDOR_BANCO, user=USUARIO_BANCO, password=SENHA_BANCO, database=NOME_BANCO)
 
-    return conexao
+def get_connection_db():
+    connection = mysql.connect(
+        host=DB_SERVER, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE_NAME)
+
+    return connection
+
 
 @servico.get("/info")
 def get_info():
     return jsonify(
-        descricao = "gerenciamento de curtidas do melhores marcas",
-        versao = "1.0"
+        data="rating - cygnus",
     )
 
-@servico.get("/likes_por_feed/<int:id_do_feed>")
-def likes_por_produto(id_do_feed):
-    conexao = get_conexao_com_bd()
+
+@servico.get("/rating_by_id/<int:id>")
+def rating_by_product(id):
+    conexao = get_connection_db()
     cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT count(*) as quantidade " +  
-        "FROM likes " +
-        "WHERE likes.feed = " + str(id_do_feed)
+    cursor.execute(
+        f"SELECT rating as value FROM rating WHERE id={id}"
     )
-    likes = cursor.fetchone()
+
+    rating = cursor.fetchone()
 
     conexao.close()
 
-    return jsonify(curtidas = likes["quantidade"])
+    return jsonify(rating_number=rating["value"])
 
-@servico.get("/curtiu/<string:conta>/<int:id_do_feed>")
-def curtiu(conta, id_do_feed):
-    conexao = get_conexao_com_bd()
-    cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT count(*) as quantidade " +  
-        "FROM likes " +
-        "WHERE likes.feed = " + str(id_do_feed) + " AND likes.email = '" + conta + "'"
+
+@servico.get("/update_rating")
+def update_rating():
+
+    conexao = get_connection_db()
+    cursor = conexao.cursor()
+    cursor.execute(
+        f''' UPDATE rating r
+    JOIN (
+        SELECT product_id, ROUND(AVG(user_rating), 2) AS average_rating
+        FROM reviews
+        GROUP BY product_id
+    ) avg_ratings
+    ON r.product_id = avg_ratings.product_id
+    SET r.rating = avg_ratings.average_rating
+    '''
     )
-    likes = cursor.fetchone()
-
+    conexao.commit()
     conexao.close()
 
-    return jsonify(curtiu = likes["quantidade"] > 0)
-
-@servico.post("/curtir/<string:conta>/<int:id_do_feed>")
-def curtir(conta, id_do_feed):
-    resultado = jsonify(situacao = "ok", erro = "")
-
-    conexao = get_conexao_com_bd()
-    cursor = conexao.cursor()
-    try:
-        cursor.execute(f"INSERT INTO likes(feed, email) VALUES ({str(id_do_feed)}, '{conta}')")
-        conexao.commit()
-    except:
-        conexao.rollback()
-        resultado = jsonify(situacao = "erro", erro = "erro curtindo o produto")
-
-    conexao.close()
-
-    return resultado
-
-@servico.post("/descurtir/<string:conta>/<int:id_do_feed>")
-def descurtir(conta, id_do_feed):
-    resultado = jsonify(situacao = "ok", erro = "")
-
-    conexao = get_conexao_com_bd()
-    cursor = conexao.cursor()
-    try:
-        cursor.execute(f"DELETE FROM likes WHERE feed = {str(id_do_feed)} AND email = '{conta}'")
-        conexao.commit()
-    except:
-        conexao.rollback()
-        resultado = jsonify(situacao = "erro", erro = "erro descurtindo o produto")
-
-    conexao.close()
-
-    return resultado
+    return jsonify({"message": "Ratings updated successfully"}), 200
 
 
 if __name__ == "__main__":

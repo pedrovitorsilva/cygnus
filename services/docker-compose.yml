@@ -22,15 +22,15 @@ services:
     command: python3 /service/reviews.py
     ports:
       - '5002:5000'
-  ratings:
+  rating:
     build: ./dockerfiles/python
-    image: ratings
-    container_name: ratings
-    hostname: ratings
+    image: rating
+    container_name: rating
+    hostname: rating
     restart: always
     volumes:
-      - './ratings:/service'
-    command: python3 /service/ratings.py
+      - './rating:/service'
+    command: python3 /service/rating.py
     ports:
       - '5003:5000'
   database:
@@ -42,6 +42,9 @@ services:
       - '5004:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=cygnus
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
   files:
     image: files
     build: ./dockerfiles/nginx
@@ -49,6 +52,6 @@ services:
     hostname: files
     restart: always
     volumes:
-      - './imagens:/usr/share/nginx/html'
+      - './images:/usr/share/nginx/html'
     ports:
       - '5005:80'

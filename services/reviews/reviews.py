@@ -1,77 +1,113 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import mysql.connector as mysql
+import requests
 
-servico = Flask("comentarios")
+servico = Flask("reviews")
 
-SERVIDOR_BANCO = "banco"
-USUARIO_BANCO = "root"
-SENHA_BANCO = "admin"
-NOME_BANCO = "marcas"
+DB_SERVER = "database"
+DB_USER = "root"
+DB_PASSWORD = "admin"
+DB_DATABASE_NAME = "cygnus"
 
-def get_conexao_com_bd():
-    conexao = mysql.connect(host=SERVIDOR_BANCO, user=USUARIO_BANCO, password=SENHA_BANCO, database=NOME_BANCO)
 
-    return conexao
+def get_connection_db():
+    connection = mysql.connect(
+        host=DB_SERVER, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE_NAME)
+
+    return connection
+
 
 @servico.get("/info")
 def get_info():
     return jsonify(
-        descricao = "gerenciamento de comentarios do melhores marcas",
-        versao = "1.0"
+        data="reviews - cygnus",
     )
 
-@servico.get("/comentarios/<int:id_do_feed>/<int:pagina>/<int:tamanho_pagina>")
-def get_comentarios(id_do_feed, pagina, tamanho_pagina):
-    comentarios = []
 
-    conexao = get_conexao_com_bd()
-    cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT id as comentario_id, feed as produto_id, comentario, nome, conta, DATE_FORMAT(data, '%Y-%m-%d %H:%i') as data " +
-                   "FROM comentarios " +
-                   "WHERE feed = " + str(id_do_feed) + " ORDER BY data DESC " +
-                   "LIMIT " + str((pagina - 1) * tamanho_pagina) + ", " + str(tamanho_pagina))
-    comentarios = cursor.fetchall()
-    conexao.close()
-
-    return jsonify(comentarios)
+URL_REVIEW_UPDATE = "http://rating:5000/update_rating"
+def update_rating():
+    requests.get(URL_REVIEW_UPDATE)
+    return jsonify({"message": "Ratings updated successfully"}), 200
 
 
-@servico.post("/adicionar/<int:id_do_feed>/<string:nome>/<string:conta>/<string:comentario>")
-def add_comentario(id_do_feed, nome, conta, comentario):
-    resultado = jsonify(situacao = "ok", erro = "")
+@servico.get("/reviews/<int:id>")
+def get_reviews(id):
 
-    conexao = get_conexao_com_bd()
-    cursor = conexao.cursor()
+    update_rating()
+    reviews = []
+
+    connection = get_connection_db()
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(
+        f'''SELECT id as review_id,
+        product_id,
+        user_id,
+        user_name,
+        user_email,
+        user_rating,
+        user_comment
+        FROM reviews
+        WHERE product_id = {id}'''
+    )
+
+    reviews = cursor.fetchall()
+    connection.close()
+
+    return jsonify(reviews)
+
+
+@servico.route('/add', methods=['POST'])
+def add_review():
+    result = jsonify(status="ok", error="")
+
+    data = request.json
+    product_id = data.get("product_id")
+    comment = data.get("comment")
+    email = data.get("email")
+    username = data.get("username")
+    rating = data.get("rating")
+
+    connection = get_connection_db()
+    cursor = connection.cursor()
     try:
         cursor.execute(
-            f"INSERT INTO comentarios(feed, nome, conta, comentario, data) VALUES({id_do_feed}, '{nome}', '{conta}', '{comentario}', NOW())")
-        conexao.commit()
-    except:
-        conexao.rollback()
-        resultado = jsonify(situacao = "erro", erro = "erro adicionando comentário")
+            "INSERT INTO reviews (product_id, user_comment, user_email, user_name, user_rating) VALUES (%s, %s, %s, %s, %s)",
+            (product_id, comment, email, username, rating)
+        )
+        connection.commit()
+    except Exception as e:
+        connection.rollback()
+        result = jsonify(status="error", error=str(e))
 
-    conexao.close()
+    finally:
+        connection.close()
+        update_rating()
+    
+    return result
 
-    return resultado
+    # return result
 
 
-@servico.delete("/remover/<int:comentario_id>")
-def remover_comentario(comentario_id):
-    resultado = jsonify(situacao = "ok", erro = "")
+@servico.delete("/remove/<int:review_id>")
+def remove_review(review_id):
+    result = jsonify(status="ok", erro="")
 
-    conexao = get_conexao_com_bd()
-    cursor = conexao.cursor()
+    connection = get_connection_db()
+    cursor = connection.cursor()
     try:
         cursor.execute(
-            f"DELETE FROM comentarios WHERE id = {comentario_id}")
-        conexao.commit()
+            f"DELETE FROM reviews WHERE id = {review_id}"
+        )
+        connection.commit()
     except:
-        conexao.rollback()
-        resultado = jsonify(situacao = "erro", erro = "erro removendo o comentário")
+        connection.rollback()
+        result = jsonify(status="erro", erro="erro removendo o review")
 
-    conexao.close()
+    finally:
+        connection.close()
+        update_rating()
 
-    return resultado
+    return result
 
 
 if __name__ == "__main__":

@@ -35,23 +35,4 @@ flutter:
 
   assets: # Change when use back-end
     # Images
-    - lib/resources/img/product1.jpeg
-    - lib/resources/img/product2.jpeg
-    - lib/resources/img/product3.jpeg
-    - lib/resources/img/product4.jpeg
-    - lib/resources/img/product5.jpeg
-    - lib/resources/img/product6.jpeg
-    - lib/resources/img/product7.jpeg
-    - lib/resources/img/product8.jpeg
-    - lib/resources/img/product9.jpeg
-    - lib/resources/img/product10.jpeg
-    - lib/resources/img/bethesda.jpeg
-    - lib/resources/img/microsoft.jpeg
-    - lib/resources/img/ubisoft.jpeg
-    # Gallery images
-    - lib/resources/img/gallery.jpg
-    # Icons
     - lib/resources/icons/cygnus.png
-    # Json files
-    - lib/resources/json/home.json
-    - lib/resources/json/reviews.json
