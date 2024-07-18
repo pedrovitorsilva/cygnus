@@ -20,4 +20,4 @@ Trabalho da disciplina de Programação Mobile - IFBA - 2024.1
 
 ## Telas e Componentes
 
-W.I.P. 
+W.I.P.
