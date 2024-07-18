@@ -178,7 +178,7 @@ class _ProductState extends State<Product> {
 
     String imagePath = "lib/resources/img/product$productId.jpeg";
 
-    // CHANGE THIS WHEN ADD BACKEND
+    //! CHANGE THIS WHEN ADD BACKEND
     List galleryImages = [
       "lib/resources/img/gallery.jpg",
       "lib/resources/img/gallery.jpg",
@@ -351,8 +351,13 @@ class _ProductState extends State<Product> {
                       boxShape: BoxShape.circle,
                     ),
                   ),
+                  
                   // End of Gallery
-                  _hasReviews ? _showReviews() : _noReviewsMessage(),
+
+                  // Show Reviews ----------
+                  _hasReviews 
+                      ? _showReviews() 
+                      : _noReviewsMessage(),
                 ],
               )),
             ))));
