@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:cygnus/components/user_message.dart';
 import 'package:flat_list/flat_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
 
 // My Packages
@@ -12,11 +10,11 @@ import 'package:cygnus/components/cygnus_icon.dart';
 import 'package:cygnus/components/user_icon.dart';
 import 'package:cygnus/components/custom_search_bar.dart';
 import 'package:cygnus/state.dart';
+import 'package:cygnus/api/api.dart';
 
 class MainFeed extends StatefulWidget {
-
   /// Incial app landing page.
-  /// 
+  ///
   /// Main Feed with a [ProductCard] grid
   const MainFeed({super.key});
 
@@ -25,17 +23,19 @@ class MainFeed extends StatefulWidget {
   _MainFeedState createState() => _MainFeedState();
 }
 
-const int pageSize = 5;
+const int pageSize = 6;
 
 class _MainFeedState extends State<MainFeed> {
-  late dynamic _staticFeed;
   List<dynamic> _products = [];
 
-  int _nextPage = 1;
+  bool _hasMoreItemstoLoad = true;
   bool _loading = false;
 
   late TextEditingController _filterController;
   String _filter = "";
+
+  late ServicesProduct _servicesProduct;
+  int _lastProduct = 0;
 
   @override
   void initState() {
@@ -43,8 +43,9 @@ class _MainFeedState extends State<MainFeed> {
 
     ToastContext().init(context);
 
+    _servicesProduct = ServicesProduct();
     _filterController = TextEditingController();
-    _readStaticFeed();
+    _readFeed();
     _recoverLoggedUser();
   }
 
@@ -59,53 +60,52 @@ class _MainFeedState extends State<MainFeed> {
     });
   }
 
-  Future<void> _readStaticFeed() async {
-    final String contentJson =
-        await rootBundle.loadString("lib/resources/json/home.json");
-
-    _staticFeed = await json.decode(contentJson);
-
-    _loadMainFeed();
-  }
-
-  void _loadMainFeed() {
+  void _readFeed() async {
     setState(() {
       _loading = true;
     });
 
-    var feedList = [];
-
-    if (_filter.isNotEmpty) {
-      _staticFeed["products"].where((item) {
-        String nome = item["product"]["name"];
-
-        return nome.toLowerCase().contains(_filter.toLowerCase());
-      }).forEach((item) {
-        feedList.add(item);
+    if (!(await _servicesProduct.hasMoreItemstoLoad(_lastProduct))) {
+      setState(() {
+        _loading = false;
       });
-    } else {
-      feedList = _products;
-
-      final totalMainFeedParaCarregar = _nextPage * pageSize;
-      if (_staticFeed["products"].length >= totalMainFeedParaCarregar) {
-        feedList =
-            _staticFeed["products"].sublist(0, totalMainFeedParaCarregar);
-      }
+      return;
     }
 
-    setState(() {
-      _products = feedList;
-      _nextPage = _nextPage + 1;
-
-      _loading = false;
-    });
+    if (_filter.isNotEmpty) {
+      _servicesProduct
+          .findProducts(_lastProduct, pageSize, _filter)
+          .then((products) {
+        setState(() {
+          _loading = false;
+          if (products.isEmpty) {
+            _hasMoreItemstoLoad = false;
+          } else {
+            _lastProduct = products.last["productId"];
+            _products.addAll(products);
+          }
+        });
+      });
+    } else {
+      _servicesProduct.getProducts(_lastProduct, pageSize).then((products) {
+        setState(() {
+          _loading = false;
+          if (products.isEmpty) {
+            _hasMoreItemstoLoad = false;
+          } else {
+            _lastProduct = products.last["productId"];
+            _products.addAll(products);
+          }
+        });
+      });
+    }
   }
 
   Future<void> _updateMainFeed() async {
     _products = [];
-    _nextPage = 1;
-
-    _loadMainFeed();
+    _lastProduct = 0;
+    _hasMoreItemstoLoad = true;
+    _readFeed();
   }
 
   @override
@@ -160,7 +160,7 @@ class _MainFeedState extends State<MainFeed> {
               _filterController.clear();
               return _updateMainFeed();
             },
-            onEndReached: () => _loadMainFeed(),
+            onEndReached: () => _readFeed(),
             buildItem: (item, int indice) {
               return SizedBox(
                   height: 320,

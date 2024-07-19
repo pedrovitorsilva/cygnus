@@ -101,5 +101,20 @@ def find_product(feed_id):
     return jsonify(product)
 
 
+@servico.get("/products/max")
+def find_max_product():
+    product = {}
+
+    connection = get_connection_db()
+
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT MAX(p.id) as productId FROM products p")
+    product = cursor.fetchone()
+
+    connection.close()
+
+    return jsonify(product)
+
+
 if __name__ == "__main__":
     servico.run(host="0.0.0.0", debug=True)
