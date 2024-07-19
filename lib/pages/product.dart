@@ -1,8 +1,7 @@
-import 'dart:convert';
+import 'package:cygnus/api/api.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // My Packages
 import 'package:cygnus/state.dart';
@@ -25,8 +24,8 @@ class Product extends StatefulWidget {
 enum _StateOfProduct { nonVerified, hasProduct, noProduct }
 
 class _ProductState extends State<Product> {
-  late dynamic _staticFeed;
-  late dynamic _staticReviews;
+  late ServicesProduct _servicesProduct;
+  late ServicesReviews _servicesReviews;
 
   _StateOfProduct _hasProduct = _StateOfProduct.nonVerified;
   late dynamic _product;
@@ -42,7 +41,11 @@ class _ProductState extends State<Product> {
   void initState() {
     super.initState();
 
-    __readStaticFeed();
+    _servicesProduct = ServicesProduct();
+    _servicesReviews = ServicesReviews();
+
+    _loadProduct();
+    _loadReviews();
     _startSlides();
   }
 
@@ -51,42 +54,29 @@ class _ProductState extends State<Product> {
     _slideController = PageController(initialPage: _selectedSlide);
   }
 
-  Future<void> __readStaticFeed() async {
-    String conteudoJson =
-        await rootBundle.loadString("lib/resources/json/home.json");
-    _staticFeed = await json.decode(conteudoJson);
-
-    conteudoJson =
-        await rootBundle.loadString("lib/resources/json/reviews.json");
-    _staticReviews = await json.decode(conteudoJson);
-
-    _loadProduct();
-    _loadReviews();
-  }
-
-  void _loadProduct() {
-    setState(() {
-      _product = _staticFeed['products']
-          .firstWhere((produto) => produto["_id"] == stateApp.idProduct);
-
-      _hasProduct = _product != null
-          ? _StateOfProduct.hasProduct
-          : _StateOfProduct.noProduct;
+  void _loadProduct() async {
+    _servicesProduct.findProduct(stateApp.idProduct).then((product) {
+      setState(() {
+        _product = product;
+        _hasProduct = _product != null
+            ? _StateOfProduct.hasProduct
+            : _StateOfProduct.noProduct;
+      });
     });
   }
 
-  void _loadReviews() {
+  void _loadReviews() async {
     setState(() {
       _loadingReviews = true;
     });
 
-    var moreReviews = _staticReviews["reviews"];
+    _servicesReviews.getReviews(stateApp.idProduct).then((moreReviews) {
+      setState(() {
+        _loadingReviews = false;
+        _reviews = moreReviews;
 
-    setState(() {
-      _loadingReviews = false;
-      _reviews = moreReviews;
-
-      _hasReviews = _reviews.isNotEmpty;
+        _hasReviews = _reviews.isNotEmpty;
+      });
     });
   }
 
@@ -174,44 +164,33 @@ class _ProductState extends State<Product> {
   Widget _showProduct() {
     bool usuarioLogado = stateApp.user != null;
 
-    String productId = _product["_id"].toString();
+    String productId = _product["productId"].toString();
 
-    String imagePath = "lib/resources/img/product$productId.jpeg";
+    String imagePath = "product$productId.jpeg";
 
-    //! CHANGE THIS WHEN ADD BACKEND
     List galleryImages = [
-      "lib/resources/img/gallery.jpg",
-      "lib/resources/img/gallery.jpg",
-      "lib/resources/img/gallery.jpg",
+      "gallery.jpg",
+      "gallery.jpg",
+      "gallery.jpg",
     ];
 
     // TextController for comment input
     final TextEditingController commentController = TextEditingController();
     double userRating = _product["rating"].toDouble();
 
-    void postComment() {
+    void postComment() async {
       String comment = commentController.text.trim();
 
       if (comment.isNotEmpty) {
-        // Create new review object
-        var newReview = {
-          "user": {
-            "name": stateApp.user!.name,
-            "email": stateApp.user!.email,
-          },
-          "rating": userRating,
-          "comment": comment,
-        };
 
-        // Add the new review to _reviews list
-        setState(() {
-          _reviews.add(newReview);
-          _hasReviews = true; // Make sure to set _hasReviews to true
+        await _servicesReviews
+            .addReview(stateApp.idProduct, comment, stateApp.user!, userRating)
+            .then((answer) {
+          _loadReviews();
+
+          commentController.clear();
+          FocusScope.of(context).unfocus(); // Close keyboard
         });
-        // Add code to update JSON file here
-
-        commentController.clear();
-        FocusScope.of(context).unfocus(); // Close keyboard
       }
     }
 
@@ -333,8 +312,8 @@ class _ProductState extends State<Product> {
                         });
                       },
                       itemBuilder: (context, pagePosition) {
-                        return Image.asset(
-                          galleryImages[pagePosition],
+                        return Image.network(
+                          fileAddress(galleryImages[pagePosition]),
                           fit: BoxFit.cover,
                         );
                       },
@@ -351,13 +330,11 @@ class _ProductState extends State<Product> {
                       boxShape: BoxShape.circle,
                     ),
                   ),
-                  
+
                   // End of Gallery
 
                   // Show Reviews ----------
-                  _hasReviews 
-                      ? _showReviews() 
-                      : _noReviewsMessage(),
+                  _hasReviews ? _showReviews() : _noReviewsMessage(),
                 ],
               )),
             ))));
@@ -365,7 +342,6 @@ class _ProductState extends State<Product> {
 
   @override
   Widget build(BuildContext context) {
-
     Widget product = const SizedBox.shrink();
 
     if (_hasProduct == _StateOfProduct.nonVerified) {
