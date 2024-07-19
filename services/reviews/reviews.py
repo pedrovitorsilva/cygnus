@@ -58,7 +58,7 @@ def get_reviews(id):
 
 @servico.route('/add', methods=['POST'])
 def add_review():
-    result = jsonify(status="ok", error="")
+    result = jsonify(status="ok", error="no_errors")
 
     data = request.json
     product_id = data.get("product_id")
@@ -84,8 +84,6 @@ def add_review():
         update_rating()
     
     return result
-
-    # return result
 
 
 @servico.delete("/remove/<int:review_id>")

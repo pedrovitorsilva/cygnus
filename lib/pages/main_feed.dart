@@ -28,7 +28,6 @@ const int pageSize = 6;
 class _MainFeedState extends State<MainFeed> {
   List<dynamic> _products = [];
 
-  bool _hasMoreItemstoLoad = true;
   bool _loading = false;
 
   late TextEditingController _filterController;
@@ -78,24 +77,16 @@ class _MainFeedState extends State<MainFeed> {
           .then((products) {
         setState(() {
           _loading = false;
-          if (products.isEmpty) {
-            _hasMoreItemstoLoad = false;
-          } else {
-            _lastProduct = products.last["productId"];
-            _products.addAll(products);
-          }
+          _lastProduct = products.last["productId"];
+          _products.addAll(products);
         });
       });
     } else {
       _servicesProduct.getProducts(_lastProduct, pageSize).then((products) {
         setState(() {
           _loading = false;
-          if (products.isEmpty) {
-            _hasMoreItemstoLoad = false;
-          } else {
-            _lastProduct = products.last["productId"];
-            _products.addAll(products);
-          }
+          _lastProduct = products.last["productId"];
+          _products.addAll(products);
         });
       });
     }
@@ -104,7 +95,6 @@ class _MainFeedState extends State<MainFeed> {
   Future<void> _updateMainFeed() async {
     _products = [];
     _lastProduct = 0;
-    _hasMoreItemstoLoad = true;
     _readFeed();
   }
 

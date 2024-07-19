@@ -1,3 +1,4 @@
+import 'package:cygnus/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -6,9 +7,9 @@ class ProductInfo extends StatelessWidget {
   final String imagePath;
 
   /// Information over a product.
-  /// 
+  ///
   /// Contains a [mainImage].
-  /// 
+  ///
   /// Constains a [mainData] widget, with name, rating and price.
   const ProductInfo(
       {super.key, required this.product, required this.imagePath});
@@ -16,8 +17,8 @@ class ProductInfo extends StatelessWidget {
   Widget mainImage() {
     return Padding(
         padding: const EdgeInsets.all(12),
-        child: Image.asset(
-          imagePath,
+        child: Image.network(
+          fileAddress(imagePath),
           fit: BoxFit.cover,
         ));
   }
@@ -26,7 +27,7 @@ class ProductInfo extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(maxWidth: 157),
       child: Text(
-        product["product"]["name"],
+        product["name"],
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16,
@@ -41,7 +42,7 @@ class ProductInfo extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Text(
-        product["company"]["name"],
+        product["companyName"],
         textAlign: TextAlign.left,
         style: const TextStyle(fontSize: 13, color: Colors.grey),
       ),
@@ -74,7 +75,7 @@ class ProductInfo extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Text(
-        "R\$ ${product["product"]["price"].toString()}",
+        "R\$ ${product["price"].toString()}",
         textAlign: TextAlign.left,
         style: const TextStyle(fontSize: 13),
       ),
@@ -106,7 +107,7 @@ class ProductInfo extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(25),
             child: Text(
-              product["product"]["description"],
+              product["description"],
               style: const TextStyle(fontSize: 12),
             ),
           ),

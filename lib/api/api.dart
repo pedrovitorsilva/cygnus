@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:ffi';
 
 import "package:http/http.dart" as http;
 import 'package:cygnus/autenticator.dart';
@@ -64,9 +63,20 @@ class ServicesProduct {
 
 class ServicesReviews {
   Future<dynamic> addReview(
-      int idProduct, String comment, User user, Double rating) async {
-    final answer = await http.post(Uri.parse(
-        "${URL_REVIEWS_ADD.toString()}/$idProduct/$comment/${user.email}/${user.name}/$rating"));
+      int idProduct, String comment, User user, double rating) async {
+    var body = json.encode({
+      "product_id": idProduct,
+      "comment": comment,
+      "email": user.email,
+      "username": user.name,
+      "rating": rating
+    });
+
+    final answer =
+        await http.post(
+          Uri.parse(URL_REVIEWS_ADD.toString()),
+          headers: {"Content-Type": "application/json"},
+          body: body);
 
     return jsonDecode(answer.body);
   }

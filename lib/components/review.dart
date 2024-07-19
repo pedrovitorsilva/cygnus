@@ -27,7 +27,7 @@ class Review extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Text(
-            item["user"]["name"],
+            item["user_name"],
             style: const TextStyle(fontSize: 12),
           ),
         ),
@@ -35,7 +35,7 @@ class Review extends StatelessWidget {
             padding: const EdgeInsets.only(top: 6),
             child: RatingBar.builder(
               ignoreGestures: true,
-              initialRating: item["rating"].toDouble(),
+              initialRating: item["user_rating"].toDouble(),
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,
@@ -57,7 +57,7 @@ class Review extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Text(
-        item["comment"],
+        item["user_comment"],
         style: const TextStyle(fontSize: 12),
       ),
     );
