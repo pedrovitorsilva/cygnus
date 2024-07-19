@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'dart:convert';
 
 class Review extends StatelessWidget {
   final dynamic item;
 
   /// Review element, used in product page.
-  /// 
+  ///
   /// Used inside [flatList] elements.
-  /// 
+  ///
   /// Contains a user image, name, rating, and comment.
   const Review({super.key, required this.item});
 
@@ -54,10 +55,15 @@ class Review extends StatelessWidget {
   }
 
   Widget reviewComment(dynamic item) {
+    // Convert Latin-1 string to utf8
+    String latin1String = item["user_comment"] as String;
+    List<int> latin1Bytes = latin1.encode(latin1String);
+    String utf8String = utf8.decode(latin1Bytes);
+
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Text(
-        item["user_comment"],
+        utf8String,
         style: const TextStyle(fontSize: 12),
       ),
     );
