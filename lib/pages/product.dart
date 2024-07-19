@@ -182,11 +182,6 @@ class _ProductState extends State<Product> {
       String comment = commentController.text.trim();
 
       if (comment.isNotEmpty) {
-        // // Add the new review to _reviews list
-        // setState(() {
-        //   _reviews.add(newReview);
-        //   _hasReviews = true;
-        // });
 
         await _servicesReviews
             .addReview(stateApp.idProduct, comment, stateApp.user!, userRating)

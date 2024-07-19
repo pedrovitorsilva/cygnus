@@ -5,7 +5,7 @@ import 'dart:convert';
 import "package:http/http.dart" as http;
 import 'package:cygnus/autenticator.dart';
 
-final URL_MAIN = Uri.parse("http://192.168.1.81"); // 192.168.222.237
+final URL_MAIN = Uri.parse("http://192.168.1.81"); //! Trocar IP para Localhost
 
 final URL_PRODUCTS = "${URL_MAIN.toString()}:5001/products";
 final URL_PRODUCT = "${URL_MAIN.toString()}:5001/product";
